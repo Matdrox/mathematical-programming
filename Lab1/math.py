@@ -64,14 +64,29 @@ def uppgift2():
                       [3, 4, 6],
                       [1, 5, 7]])
         return np.matmul(x, x)
-    
+
     print(function_a(), '\n')
     print(function_b1(), '\n')
     print(function_b2(), '\n')
     print(function_c1(), '\n')
     print(function_c2(), '\n')
 
+    
+def uppgift3():
+    x = np.linspace(start=-10, stop=10, num=100)
+    y = 1 + x + 4/np.square(x-2)
+    asymptote_y = x + 1
+    plt.figure()
+    plt.plot(x, y, label='f(x) = 1 + x + 4/np.square(x-2)')
+    plt.axvline(x=2, label='x = 2', color='darkorange')
+    plt.plot(x, asymptote_y, label='f(x) = x + 1', color='darkorange')
+    plt.legend()
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+    plt.ylim(-10, 10)
+    plt.grid()
+    plt.show()
 
 val = int(input('Välj uppgiften du ska kolla på (int): '))
-functions = [uppgift1, uppgift2]
+functions = [uppgift1, uppgift2, uppgift3]
 functions[val-1]()
