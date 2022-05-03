@@ -1,4 +1,5 @@
 import numpy as np
+import sympy as sp
 import matplotlib.pyplot as plt
 
 
@@ -71,7 +72,7 @@ def uppgift2():
     print(function_c1(), '\n')
     print(function_c2(), '\n')
 
-    
+
 def uppgift3():
     x = np.linspace(start=-10, stop=10, num=100)
     y = 1 + x + 4/np.square(x-2)
@@ -87,6 +88,25 @@ def uppgift3():
     plt.grid()
     plt.show()
 
+
+def uppgift4():
+    def f(x):
+        return 1 + np.sin(x) + 0.5*np.cos(4*x)
+    h = 0.001
+    x = np.linspace(start=0, stop=6, num=100)
+    y_numerical = (f(x+h) - f(x))/h
+    y_analytical = np.cos(x) - 2*np.sin(4*x)+0.5
+    plt.figure()
+    plt.plot(x, y_analytical, label='Analytical + 0.5')
+    plt.plot(x, y_numerical, label='Numerical')
+    plt.legend()
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+    plt.ylim(-10, 10)
+    plt.grid()
+    plt.show()
+
+
 val = int(input('Välj uppgiften du ska kolla på (int): '))
-functions = [uppgift1, uppgift2, uppgift3]
+functions = [uppgift1, uppgift2, uppgift3, uppgift4]
 functions[val-1]()
