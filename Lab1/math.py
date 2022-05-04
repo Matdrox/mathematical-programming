@@ -107,6 +107,37 @@ def uppgift4():
     plt.show()
 
 
+def uppgift5():
+    def riemann(func, a, b, n):
+        dx = (b-a)/n
+        x = np.arange(a, b, step=dx)
+        y = func(x)
+        return y.sum()*dx
+
+    def f(x):
+        return x/np.cbrt(x**2+4)
+
+    def g(x):
+        return np.sqrt(x)*np.log(x)
+
+    print(riemann(f, 0, 2, 100))
+    print(riemann(g, 1, 4, 100))
+
+def uppgift6():
+    t = np.linspace(start=0, stop=10)
+    plt.figure()
+    for a in range(-4, 5):
+        for b in range(-4, 5):
+            q_a = np.power(np.e, -t) * (a*np.cos(t)+b*np.sin(t)) + np.cos(t) + 2*np.sin(t)
+            plt.plot(t, q_a)
+    q_b = np.cos(t)+2*np.sin(t)
+    plt.plot(t, q_b, label='cos(t)+2sin(2)')
+    plt.legend()
+    plt.ylabel('q(t)')
+    plt.grid()
+    plt.show()
+
+
 val = int(input('Välj uppgiften du ska kolla på (int): '))
-functions = [uppgift1, uppgift2, uppgift3, uppgift4]
+functions = [uppgift1, uppgift2, uppgift3, uppgift4, uppgift5, uppgift6]
 functions[val-1]()
