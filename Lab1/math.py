@@ -1,5 +1,6 @@
+from cProfile import label
 import numpy as np
-import sympy as sp
+import math
 import matplotlib.pyplot as plt
 
 
@@ -123,21 +124,94 @@ def uppgift5():
     print(riemann(f, 0, 2, 100))
     print(riemann(g, 1, 4, 100))
 
+
 def uppgift6():
-    t = np.linspace(start=0, stop=10)
+    t = np.linspace(start=0, stop=10, num=100)
     plt.figure()
     for a in range(-4, 5):
         for b in range(-4, 5):
-            q_a = np.power(np.e, -t) * (a*np.cos(t)+b*np.sin(t)) + np.cos(t) + 2*np.sin(t)
+            q_a = np.power(np.e, -t) * (a*np.cos(t)+b *
+                                        np.sin(t)) + np.cos(t) + 2*np.sin(t)
             plt.plot(t, q_a)
     q_b = np.cos(t)+2*np.sin(t)
     plt.plot(t, q_b, label='cos(t)+2sin(2)')
     plt.legend()
+    plt.xlabel('t')
     plt.ylabel('q(t)')
+    plt.ylim(-10, 10)
+    plt.grid()
+    plt.show()
+
+
+def uppgift7():
+    x = np.linspace(start=-10, stop=10, num=100)
+    y_taylor = 0.2
+    plt.figure()
+    for k in range(14):
+        y_taylor += (np.power((-1), k) * (np.power(x, 2*k+1) /
+                     np.math.factorial(2*k+1))).astype('float64')
+        if k == 13:
+            plt.plot(x, y_taylor, label='Taylor (+0.2)')
+
+    y_sin = np.sin(x)
+    plt.plot(x, y_sin, label='sin(x)')
+    plt.legend()
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.ylim(-10, 10)
+    plt.grid()
+    plt.show()
+
+
+def uppgift8():
+    def y(x):
+        return x-np.cos(x)
+    
+    def y_der(x):
+        return 1+np.sin(x)
+
+    x_plot = np.linspace(start=-5, stop=5, num=100)
+    y1 = x_plot
+    y2 = np.cos(x_plot)
+    a = -6      #  -5-cos(-5) = -7.0
+    b = 2       #  2-cos(2) = 2.42
+    c = 0
+    it = 0
+    while True:
+        it += 1         # Kräver flera iterationer
+        c = (a+b)/2
+        if y(c) < 0:
+            a = c
+        else:   
+            b = c
+        if np.abs(a-b) < 10**-12:
+            print(c)
+            print('it: ' + str(it))
+            break
+    
+    x = a       # Når Pythons gräns
+    it = 0
+    while True:         # Mer rätt
+        it += 1         # Kräver färre iterationer
+        x_temp = x
+        x -= y(x)/y_der(x)
+        if np.abs(x-x_temp) < 10**-12:
+            print(x)
+            print('it: ' + str(it))
+            break
+
+    plt.figure()
+    plt.plot(x_plot, y1, label='y=x')
+    plt.plot(x_plot, y2, label='y=cos(x)')
+    # plt.plot(x, y3, label='y=x-cos(x)')
+    plt.legend()
+    plt.xlabel('x')
+    plt.xlabel('y')
     plt.grid()
     plt.show()
 
 
 val = int(input('Välj uppgiften du ska kolla på (int): '))
-functions = [uppgift1, uppgift2, uppgift3, uppgift4, uppgift5, uppgift6]
+functions = [uppgift1, uppgift2, uppgift3,
+             uppgift4, uppgift5, uppgift6, uppgift7, uppgift8]
 functions[val-1]()
