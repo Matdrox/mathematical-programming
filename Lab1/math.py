@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import fsolve
+from scipy.optimize import linprog
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import re
 
 
 def uppgift1():
@@ -239,15 +241,15 @@ def uppgift9():
         x2 = [0, 6, 3]
         y2 = [0, 0, 3]
         z2 = [0, 0, 6]
-        
+
         x3 = [6, 0, 3]
         y3 = [6, 6, 3]
         z3 = [0, 0, 6]
-        
+
         x4 = [6, 6, 3]
         y4 = [6, 0, 3]
         z4 = [0, 0, 6]
-        
+
         x5 = [0, 0, 6, 6]
         y5 = [0, 6, 6, 0]
         z5 = [0, 0, 0, 0]
@@ -257,7 +259,7 @@ def uppgift9():
         vertices3 = [list(zip(x3, y3, z3))]
         vertices4 = [list(zip(x4, y4, z4))]
         vertices5 = [list(zip(x5, y5, z5))]
-            
+
         poly1 = Poly3DCollection(vertices1, alpha=0.8)
         poly2 = Poly3DCollection(vertices2, alpha=0.8)
         poly3 = Poly3DCollection(vertices3, alpha=0.8)
@@ -289,28 +291,67 @@ def uppgift9():
         ax.set_zlim(-10, 10)
 
     def spiral():
-        fig = plt.figure()
         ax = plt.axes(projection='3d')
 
         z = np.linspace(0, 15, 100)
         x1 = np.cos(z)
         y1 = np.sin(z)
-        
+
         x2 = np.cos(z+np.pi)
         y2 = np.sin(z+np.pi)
-        
+
         ax.plot3D(x1, y1, z, 'red')
         ax.plot3D(x2, y2, z, 'blue')
 
     # cone()
     # pyramid()
     # half_sphere()
-    # spiral()
+    spiral()
     plt.show()
 
+
+def uppgift10():
+    def a():
+        a = np.array([[4, -1, -9, -4, -6],
+                      [1, 1, -1, 4, -5],
+                      [0, -3, 4, 7, 0],
+                      [3, -5, -5, -3, 7],
+                      [9, -1, 4, -8, -9]])
+        b = np.array([-59, -21, 20, 16, -11])
+        x = np.linalg.solve(a, b)
+        print(x)
+
+    def b():
+        p = np.array([28820, 25460, 21810, 20640, 18000, 16300, 14160,
+                     13620, 13080, 10360, 1360, 1620, 5390, 7680, 12210, 13600, 8430])
+        x = np.array([1325.9, 1167.3, 1069.1, 992.5, 821.2, 676.3, 548,
+                     515.4, 476.3, 342, 25.5, 31.3, 150.4, 226, 395.5, 454, 255.1])
+        # y = kx + m
+        # p = bx + a
+        A = np.vstack([x, np.ones(len(x))]).T
+        b, a = np.linalg.lstsq(A, p, rcond=None)[0]
+        print(f'Tokyo - Sendai: {a + b*325.4}¥')
+        print(f'Stockholm - Göteborg: {0.0759*(a + b*455)}:-')
+
+    def c():
+        c = np.array([1.95, 0.49, 0.99, 1.20, 31.96, 6.50, 6.95, 0.95, 0.49, 2.99, 2.69, 5.99, 1.09, 1.99, 2.99, 12.90, 6.90, 0.99, 17.90, 2.99, 6.99, 7.99, 19.90, 8.99, 7.99, 1000])
+        b_ub = np.array([60000, 275000, 70000, 0.7, 1.1, 1.2, 15, 0.002, 75, 0.01, 0.065])
+        a_ub = np.array([])
+        with open("nutrients.text", "r") as file:
+            for line in file.readlines()[2:32]:
+                if not line.isspace():
+                    add = re.sub("\s+", ",", line.strip()).split(",")
+                    if a_ub.size > 0:  #check if first time
+                        a_ub = np.vstack([a_ub, add[1:12]])  #add row
+                    else:
+                        a_ub = np.array(add[1:12])
+        result = linprog(c, a_ub.T, b_ub)
+        print(result)
+    
+    c()
 
 val = int(input('Välj uppgiften du ska kolla på (int): '))
 functions = [uppgift1, uppgift2, uppgift3, uppgift4,
              uppgift5, uppgift6, uppgift7, uppgift8,
-             uppgift9]
+             uppgift9, uppgift10]
 functions[val-1]()
