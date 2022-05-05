@@ -1,7 +1,7 @@
-from cProfile import label
 import numpy as np
-import math
 import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 
 def uppgift1():
@@ -166,15 +166,15 @@ def uppgift7():
 def uppgift8():
     def y(x):
         return x-np.cos(x)
-    
+
     def y_der(x):
         return 1+np.sin(x)
 
-    x_plot = np.linspace(start=-5, stop=5, num=100)
+    x_plot = np.linspace(start=-5, stop=5)
     y1 = x_plot
     y2 = np.cos(x_plot)
-    a = -6      #  -5-cos(-5) = -7.0
-    b = 2       #  2-cos(2) = 2.42
+    a = -6  # -5-cos(-5) = -7.0
+    b = 2  # 2-cos(2) = 2.42
     c = 0
     it = 0
     while True:
@@ -182,13 +182,13 @@ def uppgift8():
         c = (a+b)/2
         if y(c) < 0:
             a = c
-        else:   
+        else:
             b = c
         if np.abs(a-b) < 10**-12:
             print(c)
             print('it: ' + str(it))
             break
-    
+
     x = a       # Når Pythons gräns
     it = 0
     while True:         # Mer rätt
@@ -200,9 +200,13 @@ def uppgift8():
             print('it: ' + str(it))
             break
 
+    x_solve = fsolve(y, 0)
+    print('Svar: ' + str(x_solve))
+
     plt.figure()
     plt.plot(x_plot, y1, label='y=x')
     plt.plot(x_plot, y2, label='y=cos(x)')
+
     # plt.plot(x, y3, label='y=x-cos(x)')
     plt.legend()
     plt.xlabel('x')
@@ -211,7 +215,102 @@ def uppgift8():
     plt.show()
 
 
+def uppgift9():
+    def cone():
+        ax = plt.axes(projection='3d')
+        r = np.linspace(0, 10, 100)
+        v = np.linspace(0, 2*np.pi, 100)
+        R, V = np.meshgrid(r, v)
+        X = R * np.cos(V)
+        Y = R * np.sin(V)
+
+        Z = -np.sqrt(X**2 + Y**2)+10
+        ax.plot_surface(X, Y, Z)
+
+    def pyramid():
+        fig = plt.figure()
+
+        ax = fig.add_subplot(111, projection='3d')
+
+        x1 = [0, 0, 3]
+        y1 = [0, 6, 3]
+        z1 = [0, 0, 6]
+
+        x2 = [0, 6, 3]
+        y2 = [0, 0, 3]
+        z2 = [0, 0, 6]
+        
+        x3 = [6, 0, 3]
+        y3 = [6, 6, 3]
+        z3 = [0, 0, 6]
+        
+        x4 = [6, 6, 3]
+        y4 = [6, 0, 3]
+        z4 = [0, 0, 6]
+        
+        x5 = [0, 0, 6, 6]
+        y5 = [0, 6, 6, 0]
+        z5 = [0, 0, 0, 0]
+
+        vertices1 = [list(zip(x1, y1, z1))]
+        vertices2 = [list(zip(x2, y2, z2))]
+        vertices3 = [list(zip(x3, y3, z3))]
+        vertices4 = [list(zip(x4, y4, z4))]
+        vertices5 = [list(zip(x5, y5, z5))]
+            
+        poly1 = Poly3DCollection(vertices1, alpha=0.8)
+        poly2 = Poly3DCollection(vertices2, alpha=0.8)
+        poly3 = Poly3DCollection(vertices3, alpha=0.8)
+        poly4 = Poly3DCollection(vertices4, alpha=0.8)
+        poly5 = Poly3DCollection(vertices5, alpha=0.8)
+
+        ax.add_collection3d(poly1)
+        ax.add_collection3d(poly2)
+        ax.add_collection3d(poly3)
+        ax.add_collection3d(poly4)
+        ax.add_collection3d(poly5)
+
+        ax.set_xlim(0, 6)
+        ax.set_ylim(0, 6)
+        ax.set_zlim(0, 6)
+
+    def half_sphere():
+        ax = plt.axes(projection='3d')
+        R = 10
+        v = np.linspace(0, 2*np.pi, 100)
+        u = np.linspace(0, np.pi/2, 100)
+        V, U = np.meshgrid(v, u)
+        X = R * np.sin(U) * np.cos(V)
+        Y = R * np.sin(U) * np.sin(V)
+        Z = R * np.cos(U)
+        ax.plot_surface(X, Y, Z)
+        ax.set_xlim(-10, 10)
+        ax.set_ylim(-10, 10)
+        ax.set_zlim(-10, 10)
+
+    def spiral():
+        fig = plt.figure()
+        ax = plt.axes(projection='3d')
+
+        z = np.linspace(0, 15, 100)
+        x1 = np.cos(z)
+        y1 = np.sin(z)
+        
+        x2 = np.cos(z+np.pi)
+        y2 = np.sin(z+np.pi)
+        
+        ax.plot3D(x1, y1, z, 'red')
+        ax.plot3D(x2, y2, z, 'blue')
+
+    # cone()
+    # pyramid()
+    # half_sphere()
+    # spiral()
+    plt.show()
+
+
 val = int(input('Välj uppgiften du ska kolla på (int): '))
-functions = [uppgift1, uppgift2, uppgift3,
-             uppgift4, uppgift5, uppgift6, uppgift7, uppgift8]
+functions = [uppgift1, uppgift2, uppgift3, uppgift4,
+             uppgift5, uppgift6, uppgift7, uppgift8,
+             uppgift9]
 functions[val-1]()
