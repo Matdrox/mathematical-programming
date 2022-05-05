@@ -334,21 +334,44 @@ def uppgift10():
         print(f'Stockholm - Göteborg: {0.0759*(a + b*455)}:-')
 
     def c():
-        c = np.array([1.95, 0.49, 0.99, 1.20, 31.96, 6.50, 6.95, 0.95, 0.49, 2.99, 2.69, 5.99, 1.09, 1.99, 2.99, 12.90, 6.90, 0.99, 17.90, 2.99, 6.99, 7.99, 19.90, 8.99, 7.99, 1000])
-        b_ub = np.array([60000, 275000, 70000, 0.7, 1.1, 1.2, 15, 0.002, 75, 0.01, 0.065])
+        c = np.array([1.95, 0.49, 0.99, 1.20, 31.96, 6.50, 6.95, 0.95, 0.49, 2.99, 2.69, 5.99,
+                     1.09, 1.99, 2.99, 12.90, 6.90, 0.99, 17.90, 2.99, 6.99, 7.99, 19.90, 8.99, 7.99, 1000])
         a_ub = np.array([])
+        a_eq = np.array([[173, 322, 166, 1418, 1361, 1866, 2629, 218, 103, 74, 141,
+                        670, 1576, 371, 97, 3699, 93, 252, 1682, 647, 647, 787, 964, 621, 482, 0]])
+        b_ub = np.array([60000, 275000, 70000, 0.7, 1.1,
+                        1.2, 15, 0.002, 75, 0.01, 0.065])
+        b_eq = 8710
+        A_eq = np.array([])
+
         with open("nutrients.text", "r") as file:
             for line in file.readlines()[2:32]:
                 if not line.isspace():
                     add = re.sub("\s+", ",", line.strip()).split(",")
-                    if a_ub.size > 0:  #check if first time
-                        a_ub = np.vstack([a_ub, add[1:12]])  #add row
+                    if a_ub.size > 0:
+                        a_ub = np.vstack([a_ub, add[1:12]])
                     else:
                         a_ub = np.array(add[1:12])
-        result = linprog(c, a_ub.T, b_ub)
+        with open("nutrients.text", "r") as file:
+            for line in file.readlines()[2:32]:
+                if not line.isspace():
+                    add = re.sub("\s+", ",", line.strip()).split(",")
+                    if A_eq.size > 0:  # check if first time
+                        A_eq = np.vstack([A_eq, add[12:13]])  # add row
+                    else:
+                        A_eq = np.array([add[12:13]])
+
+        a_ub = a_ub.transpose()
+        a_ub = a_ub.astype(float)
+        a_ub *= -1
+        b_ub *= -1
+
+        result = linprog(c, a_ub, b_ub, a_eq, b_eq, options={
+                         'tol': 1e-10}, method='revised simplex')
         print(result)
-    
+
     c()
+
 
 val = int(input('Välj uppgiften du ska kolla på (int): '))
 functions = [uppgift1, uppgift2, uppgift3, uppgift4,
