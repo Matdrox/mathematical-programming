@@ -342,7 +342,6 @@ def uppgift10():
         b_ub = np.array([60000, 275000, 70000, 0.7, 1.1,
                         1.2, 15, 0.002, 75, 0.01, 0.065])
         b_eq = 8710
-        A_eq = np.array([])
 
         with open("nutrients.text", "r") as file:
             for line in file.readlines()[2:32]:
@@ -352,14 +351,6 @@ def uppgift10():
                         a_ub = np.vstack([a_ub, add[1:12]])
                     else:
                         a_ub = np.array(add[1:12])
-        with open("nutrients.text", "r") as file:
-            for line in file.readlines()[2:32]:
-                if not line.isspace():
-                    add = re.sub("\s+", ",", line.strip()).split(",")
-                    if A_eq.size > 0:  # check if first time
-                        A_eq = np.vstack([A_eq, add[12:13]])  # add row
-                    else:
-                        A_eq = np.array([add[12:13]])
 
         a_ub = a_ub.transpose()
         a_ub = a_ub.astype(float)
