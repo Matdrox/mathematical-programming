@@ -92,13 +92,6 @@ def uppgift2():
     M = np.ones((n, n))
     result = sp.convolve(S, M, mode='constant')
 
-    for i in range(n):
-        for j in range(n):
-            if result[i][j] < 255*n*n:
-                result[i][j] = 255
-            else:
-                result[i][j] = 0
-
     result[result>255*n*n] = 0
     result[result<255*n*n] = 0
 
