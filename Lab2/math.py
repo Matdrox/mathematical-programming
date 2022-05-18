@@ -98,6 +98,9 @@ def uppgift2():
     plt.imshow(result, cmap='gray', vmin=0, vmax=255)
     plt.show()
 
+def uppgift3():
+    
+
 val = int(input('Välj uppgiften du ska kolla på (int): '))
-functions = [uppgift1, uppgift2]
+functions = [uppgift1, uppgift2, uppgift3]
 functions[val-1]()
