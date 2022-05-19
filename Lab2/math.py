@@ -1,6 +1,8 @@
 import numpy as np
-import scipy.ndimage as sp
 import matplotlib.pyplot as plt
+from scipy import ndimage
+from scipy import io
+from scipy.fftpack import fft, fftfreq
 from PIL import Image
 
 
@@ -68,15 +70,15 @@ def uppgift2():
     img_grayscale = R * 0.2989 + G * 0.5870 + B * 0.1140
 
     Gx = np.array([[-1, 0, 1],
-                      [-2, 0, 2],
-                      [-1, 0, 1]])
+                   [-2, 0, 2],
+                   [-1, 0, 1]])
 
     Gy = np.array([[-1, -2, -1],
-                      [0, 0, 0],
-                      [1, 2, 1]])
+                   [0, 0, 0],
+                   [1, 2, 1]])
 
-    xd = sp.convolve(img_grayscale, Gx, mode='constant')
-    yd = sp.convolve(img_grayscale, Gy, mode='constant')
+    xd = ndimage.convolve(img_grayscale, Gx, mode='constant')
+    yd = ndimage.convolve(img_grayscale, Gy, mode='constant')
 
     rows, cols = img_grayscale.shape
 
@@ -85,21 +87,64 @@ def uppgift2():
         for j in range(cols):
             S[i][j] = np.sqrt(np.square(xd[i][j]) + np.square(yd[i][j]))
 
-    S[S>250] = 0
-    S[S<50] = 255
+    S[S > 250] = 0
+    S[S < 50] = 255
 
     n = 1
     M = np.ones((n, n))
-    result = sp.convolve(S, M, mode='constant')
+    result = ndimage.convolve(S, M, mode='constant')
 
-    result[result>255*n*n] = 0
-    result[result<255*n*n] = 0
+    result[result > 255*n*n] = 0
+    result[result < 255*n*n] = 0
 
     plt.imshow(result, cmap='gray', vmin=0, vmax=255)
     plt.show()
 
+
 def uppgift3():
-    
+    # samplerate, data = io.wavfile.read('Piano_1_C.wav')
+    # length = data.shape[0]/samplerate
+    # time = np.linspace(0, length, data.shape[0])
+    # plt.plot(time, data[:, 0], label='Left Channel')
+    # plt.plot(time, data[:, 1], label='Right Channel')
+    # plt.legend()
+    # plt.title('Sine Wave')
+    # plt.xlabel('Time')
+    # plt.ylabel('Amplitude')
+    def a():
+        fs, data = io.wavfile.read('Piano_1_C.wav')  # Samplerate: 44100
+        audio = data[0:fs]
+        F = fft(audio)
+        fourier_half = len(F)/2
+
+        # Python tror att det är en float... lägger till .0
+        plt.plot(abs(F[:(int(fourier_half))]))
+        plt.xlabel('Tid')
+        plt.ylabel('Amplitud')
+        plt.title('Piano Wave')
+        plt.xlim([0, 1000])
+
+    def b():
+        def freq_to_note(f):
+            notes = ['A', 'A#', 'B', 'C', 'C#', 'D',
+                     'D#', 'E', 'F', 'F#', 'G', 'G#']
+            num = 12*np.log2(f/440) + 49
+            num = round(num)
+            note = (num-1) % len(notes)
+            note = notes[note]
+
+            return note
+
+        fs, data = io.wavfile.read('Piano_5.wav')
+        audio = data[0:fs]
+        F = fft(audio)
+        freq = np.argmax(abs(F))
+
+        print(f'Frekvensen {freq} är tonen {freq_to_note(freq)}.')
+
+    b()
+    plt.show()
+
 
 val = int(input('Välj uppgiften du ska kolla på (int): '))
 functions = [uppgift1, uppgift2, uppgift3]
