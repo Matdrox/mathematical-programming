@@ -167,15 +167,15 @@ def uppgift3():
             fourier_half[fourier_half.size - notes_e[i] -
                          offset:fourier_half.size - notes_e[i]+offset] = 0
 
-        fourier_half[0:500] = 0
-        fourier_half[42000:44100] = 0
+        fourier_half[0:300] = 0
+        fourier_half[43800:44100] = 0
 
         plt.plot(fourier_half, label='C-moll', color='darkblue')
         plt.legend()
         plt.xlabel('Tid')
         plt.ylabel('Amplitud')
         plt.title('Piano Wave')
-        plt.xlim([40000, 44100])
+        # plt.xlim([40000, 44100])
 
         data = ifft(fourier_half)
         io.wavfile.write('Cmoll.wav', 44100, data.astype(np.int16))
