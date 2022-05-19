@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage
 from scipy import io
-from scipy.fftpack import fft, fftfreq
+from scipy.fftpack import fft, ifft
+from scipy.interpolate import interp1d
 from PIL import Image
 
 
@@ -122,7 +123,7 @@ def uppgift3():
         plt.xlabel('Tid')
         plt.ylabel('Amplitud')
         plt.title('Piano Wave')
-        plt.xlim([0, 1000])
+        plt.xlim([0, 3000])
 
     def b():
         def freq_to_note(f):
@@ -140,9 +141,46 @@ def uppgift3():
         F = fft(audio)
         freq = np.argmax(abs(F))
 
-        print(f'Frekvensen {freq} är tonen {freq_to_note(freq)}.')
+        print(f'Frekvensen {freq} är tonen {freq_to_note(21)}.')
 
-    b()
+    def c():
+        notes_e = [41, 82, 165, 330, 659, 1319, 2637]
+        notes_ess = [39, 78, 156, 311, 622, 1245, 2489]
+        offset = 5
+
+        fs, data = io.wavfile.read('Cdur.wav')
+        audio = data[0:fs]
+        F = fft(audio)
+        fourier_half = abs(F[:int(len(F))])
+        plt.plot(fourier_half, label='C-dur', color='darkorange')
+
+        for i in range(len(notes_e)):
+            temp = fourier_half[notes_e[i]-offset: notes_e[i]+offset]
+            fourier_half[notes_ess[i]-offset: notes_ess[i]+offset] = temp
+            fourier_half[notes_e[i]-offset:notes_e[i]+offset] = 0
+
+        for i in range(len(notes_e)):
+            temp = fourier_half[fourier_half.size - notes_e[i] -
+                                offset: fourier_half.size - notes_e[i]+offset]
+            fourier_half[fourier_half.size - notes_ess[i] -
+                         offset: fourier_half.size - notes_ess[i]+offset] = temp
+            fourier_half[fourier_half.size - notes_e[i] -
+                         offset:fourier_half.size - notes_e[i]+offset] = 0
+
+        fourier_half[0:500] = 0
+        fourier_half[42000:44100] = 0
+
+        plt.plot(fourier_half, label='C-moll', color='darkblue')
+        plt.legend()
+        plt.xlabel('Tid')
+        plt.ylabel('Amplitud')
+        plt.title('Piano Wave')
+        plt.xlim([40000, 44100])
+
+        data = ifft(fourier_half)
+        io.wavfile.write('Cmoll.wav', 44100, data.astype(np.int16))
+
+    c()
     plt.show()
 
 
